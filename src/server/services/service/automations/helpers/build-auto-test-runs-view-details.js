@@ -5,6 +5,7 @@ import { renderTestSuiteTagHtml } from './render-test-suite-tag-html.js'
 import { buildSuggestions } from '../../../../common/components/autocomplete/helpers/build-suggestions.js'
 import { getAutoTestRunDetails } from './fetchers.js'
 import { testKind } from '../../../../test-suites/constants/test-kind.js'
+import uniqBy from 'lodash/uniqBy.js'
 
 function sortRows(rowA, rowB) {
   const aHeader = rowA.cells.find(
@@ -41,14 +42,14 @@ async function buildAutoTestRunsViewDetails({
   environments
 }) {
   const serviceTeamIds = serviceTeams.map((team) => team.teamId)
-  const promisesTestSuites = serviceTeamIds.map(fetchTestSuites)
+  const promisesTestSuitesPerTeamId = serviceTeamIds.map(fetchTestSuites)
 
-  const [autoTestRunDetails, testSuitesResponse = []] = await Promise.all([
+  const [autoTestRunDetails, ...testSuitesArrayPerTeam] = await Promise.all([
     getAutoTestRunDetails(serviceId),
-    ...promisesTestSuites
+    ...promisesTestSuitesPerTeamId
   ])
 
-  const testSuites = testSuitesResponse.flat()
+  const testSuites = uniqBy(testSuitesArrayPerTeam.flat(), 'name')
 
   const rowBuilder = testSuiteToEntityRow({
     serviceName: serviceId,

@@ -416,10 +416,6 @@ function mockAvailableVersions() {
   ])
 }
 
-export function mockFetchShutteringUrlsCall(repositoryName) {
-  fetchShutteringUrls.mockResolvedValue?.(shutteringUrlsFixture(repositoryName))
-}
-
 function mockApiGatewaysCall(repositoryName) {
   fetchApiGateways.mockResolvedValue?.(apiGatewaysFixture(repositoryName))
 }
@@ -489,7 +485,6 @@ export function mockServicesAdditionalCalls({
   mockRepositoryCall(repositoryName, ['microservice', frontendOrBackend])
   mockTenantServicesCall(isPostgresService)
   mockAvailableVersions()
-  mockFetchShutteringUrlsCall(repositoryName)
 
   if (frontendOrBackend?.toLowerCase() === 'backend') {
     mockApiGatewaysCall(repositoryName)
